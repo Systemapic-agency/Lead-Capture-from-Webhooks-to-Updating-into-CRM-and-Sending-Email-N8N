@@ -1,0 +1,104 @@
+{
+  "name": "SS05 - Capture Lead From Webhook to Updating to CRM + Sending Email",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "1e73526e-6894-4696-9978-5ee77b2d4c61",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c55981ac-6df7-440a-a0f7-3509f15001ea",
+      "name": "Webhook",
+      "webhookId": "1e73526e-6894-4696-9978-5ee77b2d4c61"
+    },
+    {
+      "parameters": {
+        "email": "={{ $json.body.email }}",
+        "phone": "={{ $json.body.phone }}",
+        "additionalFields": {
+          "name": "={{ $json.body.name }}"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.highLevel",
+      "typeVersion": 2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "be42d931-d6bd-48c4-82ad-944892f67fc5",
+      "name": "Create or update a contact",
+      "credentials": {
+        "highLevelOAuth2Api": {
+          "id": "UWBVANtwANqKghpA",
+          "name": "HighLevel account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "test",
+        "message": "=“Hi {{ $('Webhook').item.json.body.name }}, thanks for reaching out to [Clinic Name]. Our team will get back to you shortly.”",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "c663dd75-8fa0-4466-ab39-e204bfc08791",
+      "name": "Send a message",
+      "webhookId": "66558e5c-a080-42d5-895b-b6f922436a1d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "MeqBOByCdrdCwa3t",
+          "name": "Gmail account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Create or update a contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create or update a contact": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d41cabb8-42f3-4d16-ba28-6d657e66747f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6c4c446d5304742a3c3b35610a91a9314f8fa6e78abf59256949d198dc0f9226"
+  },
+  "id": "r90edZCLzUrX1UZg",
+  "tags": []
+}
